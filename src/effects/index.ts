@@ -1,6 +1,7 @@
 import { applyPixelate } from "./applyPixelate";
 import { applyRGBShift } from "./applyRGBShift";
 import { applyScanlines } from "./applyScanlines";
+import { applySlices } from "./applySlices";
 
 export type ConfigValue = number | boolean;
 
@@ -124,6 +125,46 @@ export const effects: EffectDefinition[] = [
         config.darkness as number,
         config.vertical as boolean,
         config.scale as number,
+      ),
+  },
+  {
+    id: "slices",
+    name: "Slices",
+    fields: [
+      {
+        type: "slider",
+        label: "Count",
+        key: "count",
+        defaultValue: 10,
+        min: 1,
+        max: 100,
+        step: 1,
+      },
+      {
+        type: "slider",
+        label: "Offset",
+        key: "offset",
+        defaultValue: 20,
+        min: -100,
+        max: 100,
+        step: 1,
+      },
+      {
+        type: "slider",
+        label: "Vertical speed",
+        key: "verticalSpeed",
+        defaultValue: 0,
+        min: -50,
+        max: 50,
+        step: 1,
+      },
+    ],
+    apply: (ctx, config) =>
+      applySlices(
+        ctx,
+        config.count as number,
+        config.offset as number,
+        config.verticalSpeed as number,
       ),
   },
 ];
