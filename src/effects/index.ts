@@ -29,8 +29,8 @@ export interface EffectDefinition {
   ) => void;
 }
 
-export const effects: EffectDefinition[] = [
-  {
+export const effectsById: Record<string, EffectDefinition> = {
+  pixelate: {
     id: "pixelate",
     name: "Pixelate",
     fields: [
@@ -57,7 +57,7 @@ export const effects: EffectDefinition[] = [
         config.grayscale as boolean,
       ),
   },
-  {
+  rgbShift: {
     id: "rgbShift",
     name: "RGB Shift",
     fields: [
@@ -94,7 +94,7 @@ export const effects: EffectDefinition[] = [
         config.direction as number,
       ),
   },
-  {
+  jitter: {
     id: "jitter",
     name: "Jitter",
     fields: [
@@ -120,7 +120,7 @@ export const effects: EffectDefinition[] = [
     apply: (ctx, config) =>
       applyJitter(ctx, config.amount as number, config.speed as number),
   },
-  {
+  scanlines: {
     id: "scanlines",
     name: "Scanlines",
     fields: [
@@ -157,7 +157,7 @@ export const effects: EffectDefinition[] = [
         config.scale as number,
       ),
   },
-  {
+  slices: {
     id: "slices",
     name: "Slices",
     fields: [
@@ -197,7 +197,7 @@ export const effects: EffectDefinition[] = [
         config.verticalSpeed as number,
       ),
   },
-  {
+  noise: {
     id: "noise",
     name: "Noise",
     fields: [
@@ -220,7 +220,7 @@ export const effects: EffectDefinition[] = [
     apply: (ctx, config) =>
       applyNoise(ctx, config.amount as number, config.color as boolean),
   },
-  {
+  pixelSort: {
     id: "pixelSort",
     name: "Pixel Sort",
     fields: [
@@ -254,7 +254,7 @@ export const effects: EffectDefinition[] = [
         config.sortDark as boolean,
       ),
   },
-  {
+  hueRotate: {
     id: "hueRotate",
     name: "Hue Rotate",
     fields: [
@@ -280,7 +280,10 @@ export const effects: EffectDefinition[] = [
     apply: (ctx, config) =>
       applyHueRotate(ctx, config.hue as number, config.saturation as number),
   },
-];
+};
+
+export const effects: EffectDefinition[] = Object.values(effectsById);
+export const defaultEffectOrder: string[] = effects.map((effect) => effect.id);
 
 export interface EffectState {
   enabled: boolean;

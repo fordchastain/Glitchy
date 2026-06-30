@@ -148,15 +148,46 @@ button:disabled {
   overflow: hidden;
 }
 
+.effect-item {
+  cursor: grab;
+}
+
+.effect-item.dragging {
+  opacity: 0.5;
+}
+
+.effect-item.drag-over {
+  border-color: #863bff;
+  box-shadow: 0 0 0 1px #863bff;
+}
+
 .effect-header {
   display: flex;
   align-items: center;
   gap: 8px;
   padding: 10px 12px;
-  cursor: pointer;
   font-size: 14px;
   font-weight: 600;
   user-select: none;
+}
+
+.drag-handle {
+  color: #555;
+  font-size: 12px;
+  line-height: 1;
+  letter-spacing: 1px;
+  cursor: grab;
+}
+
+.effect-item:hover .drag-handle {
+  color: #888;
+}
+
+.effect-header-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
 }
 
 .effect-header input[type="checkbox"] {

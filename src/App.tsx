@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect, useCallback } from "react";
-import type { ChangeEvent } from "react";
+import type { ChangeEvent, DragEvent } from "react";
 import {
-  effects,
+  effectsById,
+  defaultEffectOrder,
   createDefaultEffectStates,
   type ConfigValue,
   type EffectState,
@@ -148,6 +149,9 @@ function App() {
   const [effectsState, setEffectsState] = useState<Record<string, EffectState>>(
     createDefaultEffectStates,
   );
+  const [orderedIds, setOrderedIds] = useState<string[]>(defaultEffectOrder);
+  const [draggedId, setDraggedId] = useState<string | null>(null);
+  const [dragOverId, setDragOverId] = useState<string | null>(null);
 
   const toggleEffect = useCallback((id: string) => {
     setEffectsState((prev) => ({
@@ -169,6 +173,56 @@ function App() {
     [],
   );
 
+  const moveEffect = useCallback((fromId: string, toId: string) => {
+    if (fromId === toId) return;
+    setOrderedIds((prev) => {
+      const next = [...prev];
+      const fromIndex = next.indexOf(fromId);
+      const toIndex = next.indexOf(toId);
+      if (fromIndex === -1 || toIndex === -1) return prev;
+      next.splice(fromIndex, 1);
+      next.splice(toIndex, 0, fromId);
+      return next;
+    });
+  }, []);
+
+  const handleDragStart = useCallback(
+    (e: DragEvent<HTMLDivElement>, id: string) => {
+      setDraggedId(id);
+      e.dataTransfer.effectAllowed = "move";
+      e.dataTransfer.setData("text/plain", id);
+    },
+    [],
+  );
+
+  const handleDragOver = useCallback(
+    (e: DragEvent<HTMLDivElement>, id: string) => {
+      e.preventDefault();
+      if (draggedId && draggedId !== id) {
+        setDragOverId(id);
+      }
+    },
+    [draggedId],
+  );
+
+  const handleDrop = useCallback(
+    (e: DragEvent<HTMLDivElement>, id: string) => {
+      e.preventDefault();
+      const fromId = e.dataTransfer.getData("text/plain");
+      if (fromId) {
+        moveEffect(fromId, id);
+      }
+      setDraggedId(null);
+      setDragOverId(null);
+    },
+    [moveEffect],
+  );
+
+  const handleDragEnd = useCallback(() => {
+    setDraggedId(null);
+    setDragOverId(null);
+  }, []);
+
   // Redraw canvas when image or effects change
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -181,13 +235,14 @@ function App() {
     canvas.height = image.height;
     ctx.drawImage(image, 0, 0);
 
-    for (const effect of effects) {
-      const state = effectsState[effect.id];
-      if (state?.enabled) {
+    for (const id of orderedIds) {
+      const effect = effectsById[id];
+      const state = effectsState[id];
+      if (effect && state?.enabled) {
         effect.apply(ctx, state.config);
       }
     }
-  }, [image, effectsState]);
+  }, [image, effectsState, orderedIds]);
 
   const handleExport = () => {
     const canvas = canvasRef.current;
@@ -226,19 +281,38 @@ function App() {
 
           <h2>Effects</h2>
           <div className="effects-list">
-            {effects.map((effect) => {
-              const state = effectsState[effect.id];
+            {orderedIds.map((id) => {
+              const effect = effectsById[id];
+              if (!effect) return null;
+              const state = effectsState[id];
               return (
-                <div key={effect.id} className="effect-item">
-                  <label className="effect-header">
-                    <input
-                      type="checkbox"
-                      checked={state.enabled}
-                      onChange={() => toggleEffect(effect.id)}
-                      disabled={!image}
-                    />
-                    <span>{effect.name}</span>
-                  </label>
+                <div
+                  key={effect.id}
+                  className={`effect-item${effect.id === draggedId ? " dragging" : ""}${effect.id === dragOverId ? " drag-over" : ""}`}
+                  draggable
+                  onDragStart={(e) => handleDragStart(e, effect.id)}
+                  onDragOver={(e) => handleDragOver(e, effect.id)}
+                  onDrop={(e) => handleDrop(e, effect.id)}
+                  onDragEnd={handleDragEnd}
+                >
+                  <div className="effect-header">
+                    <span
+                      className="drag-handle"
+                      title="Drag to reorder"
+                      aria-label="Drag to reorder"
+                    >
+                      ⋮⋮
+                    </span>
+                    <label className="effect-header-label">
+                      <input
+                        type="checkbox"
+                        checked={state.enabled}
+                        onChange={() => toggleEffect(effect.id)}
+                        disabled={!image}
+                      />
+                      <span>{effect.name}</span>
+                    </label>
+                  </div>
                   {state.enabled && (
                     <div className="effect-config">
                       {effect.fields.map((field) => (
@@ -261,8 +335,8 @@ function App() {
           <p className="tip">
             <strong>Tip:</strong> Enable effects and adjust their settings. The
             preview updates once you finish adjusting a value (release a slider,
-            leave a number field, or press Enter). Effects are applied in order
-            from top to bottom.
+            leave a number field, or press Enter). Drag the ⋮⋮ handle on each
+            effect to reorder the chain — effects run from top to bottom.
           </p>
         </aside>
 
