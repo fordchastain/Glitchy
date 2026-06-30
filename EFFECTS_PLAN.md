@@ -8,7 +8,7 @@ Ordered by build priority. Each chunk is self-contained and can be built indepen
 | --- | ---------- | ------- |
 | 1   | Noise      | done    |
 | 2   | Pixel Sort | done    |
-| 3   | Hue Rotate | planned |
+| 3   | Hue Rotate | done    |
 | 4   | Smear      | planned |
 | 5   | Datamosh   | planned |
 | 6   | Bloom      | planned |

@@ -1,3 +1,4 @@
+import { applyHueRotate } from "./applyHueRotate";
 import { applyJitter } from "./applyJitter";
 import { applyNoise } from "./applyNoise";
 import { applyPixelate } from "./applyPixelate";
@@ -252,6 +253,32 @@ export const effects: EffectDefinition[] = [
         config.vertical as boolean,
         config.sortDark as boolean,
       ),
+  },
+  {
+    id: "hueRotate",
+    name: "Hue Rotate",
+    fields: [
+      {
+        type: "slider",
+        label: "Hue shift",
+        key: "hue",
+        defaultValue: 0,
+        min: 0,
+        max: 360,
+        step: 1,
+      },
+      {
+        type: "slider",
+        label: "Saturation %",
+        key: "saturation",
+        defaultValue: 100,
+        min: 0,
+        max: 200,
+        step: 1,
+      },
+    ],
+    apply: (ctx, config) =>
+      applyHueRotate(ctx, config.hue as number, config.saturation as number),
   },
 ];
 
