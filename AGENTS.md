@@ -31,8 +31,24 @@ npx prettier --write <path-to-file>
 ## Architecture notes
 
 - Entry: `index.html` → `/src/main.tsx` → `App.tsx`
-- Effects live in `src/effects.ts` and operate directly on `CanvasRenderingContext2D` / `ImageData`.
-- Keep canvas logic in `effects.ts`; keep UI state in `App.tsx`.
+- Effects live in `src/effects/` — one file per effect (`applyFoo.ts`) plus `index.ts` that registers them all in the `effects` array.
+- `index.ts` exports `effects: EffectDefinition[]`, `createDefaultEffectStates()`, `EffectState`, and `ConfigValue`.
+- Keep canvas/`ImageData` logic in `src/effects/`; keep UI state in `App.tsx`.
+- Effects run in the order listed in the `effects` array. `App.tsx` iterates the array on every render.
+
+## Current effects (shipped)
+
+| Effect | File | Controls |
+|---|---|---|
+| Pixelate | `applyPixelate.ts` | Block size, Grayscale blocks |
+| RGB Shift | `applyRGBShift.ts` | Amount, Direction (0-360°), Shift green |
+| Jitter | `applyJitter.ts` | Amount, Speed (sine-wave row shift) |
+| Scanlines | `applyScanlines.ts` | Darkness, Vertical, Scale |
+| Slices | `applySlices.ts` | Count, Offset, Vertical speed |
+
+## Roadmap
+
+See `EFFECTS_PLAN.md` for the next 10 effects with full implementation specs.
 
 ## Gotchas
 

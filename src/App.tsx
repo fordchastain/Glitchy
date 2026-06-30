@@ -62,13 +62,39 @@ function ConfigControl({
   value: ConfigValue;
   onChange: (val: ConfigValue) => void;
 }) {
+  const [localValue, setLocalValue] = useState<ConfigValue>(value);
+  const localValueRef = useRef<ConfigValue>(value);
+  const [isDragging, setIsDragging] = useState(false);
+
+  useEffect(() => {
+    localValueRef.current = localValue;
+  }, [localValue]);
+
+  useEffect(() => {
+    setLocalValue(value);
+  }, [value]);
+
+  useEffect(() => {
+    if (!isDragging) return;
+    const handlePointerUp = () => {
+      setIsDragging(false);
+      onChange(localValueRef.current);
+    };
+    window.addEventListener("pointerup", handlePointerUp);
+    return () => window.removeEventListener("pointerup", handlePointerUp);
+  }, [isDragging, onChange]);
+
   if (field.type === "checkbox") {
     return (
       <label className="config-row checkbox-row">
         <input
           type="checkbox"
-          checked={value as boolean}
-          onChange={(e) => onChange(e.target.checked)}
+          checked={localValue as boolean}
+          onChange={(e) => {
+            const checked = e.target.checked;
+            setLocalValue(checked);
+            onChange(checked);
+          }}
         />
         <span>{field.label}</span>
       </label>
@@ -79,15 +105,17 @@ function ConfigControl({
     return (
       <div className="config-field">
         <label className="config-label">
-          {field.label}: <span className="config-value">{String(value)}</span>
+          {field.label}:{" "}
+          <span className="config-value">{String(localValue)}</span>
         </label>
         <input
           type="range"
           min={field.min}
           max={field.max}
           step={field.step}
-          value={value as number}
-          onChange={(e) => onChange(Number(e.target.value))}
+          value={localValue as number}
+          onPointerDown={() => setIsDragging(true)}
+          onChange={(e) => setLocalValue(Number(e.target.value))}
         />
       </div>
     );
@@ -101,8 +129,14 @@ function ConfigControl({
         min={field.min}
         max={field.max}
         step={field.step}
-        value={value as number}
-        onChange={(e) => onChange(Number(e.target.value))}
+        value={localValue as number}
+        onChange={(e) => setLocalValue(Number(e.target.value))}
+        onBlur={() => onChange(localValue)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            onChange(localValue);
+          }
+        }}
       />
     </div>
   );
@@ -225,8 +259,10 @@ function App() {
           </div>
 
           <p className="tip">
-            <strong>Tip:</strong> Enable effects and adjust their settings in
-            real time. Effects are applied in order from top to bottom.
+            <strong>Tip:</strong> Enable effects and adjust their settings. The
+            preview updates once you finish adjusting a value (release a slider,
+            leave a number field, or press Enter). Effects are applied in order
+            from top to bottom.
           </p>
         </aside>
 

@@ -1,3 +1,5 @@
+import { applyJitter } from "./applyJitter";
+import { applyNoise } from "./applyNoise";
 import { applyPixelate } from "./applyPixelate";
 import { applyRGBShift } from "./applyRGBShift";
 import { applyScanlines } from "./applyScanlines";
@@ -91,6 +93,32 @@ export const effects: EffectDefinition[] = [
       ),
   },
   {
+    id: "jitter",
+    name: "Jitter",
+    fields: [
+      {
+        type: "slider",
+        label: "Amount",
+        key: "amount",
+        defaultValue: 5,
+        min: 0,
+        max: 100,
+        step: 1,
+      },
+      {
+        type: "slider",
+        label: "Speed",
+        key: "speed",
+        defaultValue: 10,
+        min: 0,
+        max: 100,
+        step: 1,
+      },
+    ],
+    apply: (ctx, config) =>
+      applyJitter(ctx, config.amount as number, config.speed as number),
+  },
+  {
     id: "scanlines",
     name: "Scanlines",
     fields: [
@@ -166,6 +194,29 @@ export const effects: EffectDefinition[] = [
         config.offset as number,
         config.verticalSpeed as number,
       ),
+  },
+  {
+    id: "noise",
+    name: "Noise",
+    fields: [
+      {
+        type: "slider",
+        label: "Amount",
+        key: "amount",
+        defaultValue: 30,
+        min: 0,
+        max: 100,
+        step: 1,
+      },
+      {
+        type: "checkbox",
+        label: "Color noise",
+        key: "color",
+        defaultValue: false,
+      },
+    ],
+    apply: (ctx, config) =>
+      applyNoise(ctx, config.amount as number, config.color as boolean),
   },
 ];
 

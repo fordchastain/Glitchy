@@ -38,21 +38,35 @@ Standard Vite + React + TypeScript setup:
 **Entry flow**: `index.html` → `/src/main.tsx` → `App.tsx`
 
 **File responsibilities**:
-- `App.tsx`: React component with UI state, file upload, button handlers, canvas ref management
-- `effects.ts`: Pure functions operating on `CanvasRenderingContext2D` / `ImageData` for pixel manipulation
+- `App.tsx`: React component with UI state, file upload, effect toggle/config, export, canvas ref management
+- `src/effects/index.ts`: Registers all `EffectDefinition` objects in the `effects` array; exports shared types
+- `src/effects/applyFoo.ts`: One file per effect — pure function operating on `CanvasRenderingContext2D` / `ImageData`
 - `main.tsx`: React app mounting
 - `style.css`: Global styles
 
-**Effect system**: Effects in `effects.ts` receive a canvas context and mutate its `ImageData` directly. They do not handle UI state or React lifecycle.
+**Effect system**: Each effect is declared as an `EffectDefinition` in `src/effects/index.ts` with `id`, `name`, `fields` (config schema), and `apply(ctx, config)`. The `App` component iterates `effects` in order, calling `apply` for each enabled effect after drawing the base image.
 
 **Canvas lifecycle**:
-1. User uploads image → `UploadControl` component loads it → `setImage` updates state
-2. `useEffect` in `App` redraws canvas when image changes
-3. Effect buttons call handlers that get canvas context and invoke effect functions
-4. Reset button redraws original image
+1. User uploads image → `UploadControl` loads it → `setImage` updates state
+2. `useEffect` in `App` reruns when `image` or `effectsState` changes — redraws base image then applies every enabled effect in order
+3. Config changes (slider release, number blur/Enter, checkbox toggle) update `effectsState`, triggering a redraw
+4. Export button calls `canvas.toBlob()` → downloads PNG
+
+## Current effects
+
+| # | Effect | File | Controls |
+|---|---|---|---|
+| 1 | Pixelate | `applyPixelate.ts` | Block size (1–64), Grayscale blocks |
+| 2 | RGB Shift | `applyRGBShift.ts` | Amount (0–100), Direction (0–360°), Shift green |
+| 3 | Jitter | `applyJitter.ts` | Amount (0–100), Speed (0–100) — sine-wave row shift |
+| 4 | Scanlines | `applyScanlines.ts` | Darkness (0–1), Vertical, Scale (1–20) |
+| 5 | Slices | `applySlices.ts` | Count (1–100), Offset (−100–100), Vertical speed (−50–50) |
 
 ## Adding New Effects
 
-1. Add pure function to `effects.ts` that accepts `CanvasRenderingContext2D` and any parameters
-2. Add button handler in `App.tsx` that gets canvas ref and calls the effect
-3. Add button to the sidebar UI with `disabled={!image}` and `className="effect-btn"`
+1. Create `src/effects/applyFoo.ts` — export a pure function `applyFoo(ctx, ...params): void`
+2. Add an `EffectDefinition` entry to the `effects` array in `src/effects/index.ts`
+3. Run `npx prettier --write src/effects/applyFoo.ts src/effects/index.ts`
+4. Run `npm run build` to type-check before committing
+
+See `EFFECTS_PLAN.md` for the next 10 planned effects with full implementation specs.
