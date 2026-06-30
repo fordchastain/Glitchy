@@ -7,7 +7,7 @@ Ordered by build priority. Each chunk is self-contained and can be built indepen
 | #   | Effect     | Status  |
 | --- | ---------- | ------- |
 | 1   | Noise      | done    |
-| 2   | Pixel Sort | planned |
+| 2   | Pixel Sort | done    |
 | 3   | Hue Rotate | planned |
 | 4   | Smear      | planned |
 | 5   | Datamosh   | planned |
@@ -69,7 +69,7 @@ export function applyNoise(ctx, amount, color): void
 
 ## Chunk 2 — Pixel Sort
 
-**Status:** planned
+**Status:** done
 
 **What it does:** Finds spans of pixels that cross a brightness threshold, then sorts those spans by luminance. Produces the iconic "melting" glitch columns/rows seen in datamosh art.
 

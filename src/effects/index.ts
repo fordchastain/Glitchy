@@ -1,6 +1,7 @@
 import { applyJitter } from "./applyJitter";
 import { applyNoise } from "./applyNoise";
 import { applyPixelate } from "./applyPixelate";
+import { applyPixelSort } from "./applyPixelSort";
 import { applyRGBShift } from "./applyRGBShift";
 import { applyScanlines } from "./applyScanlines";
 import { applySlices } from "./applySlices";
@@ -217,6 +218,40 @@ export const effects: EffectDefinition[] = [
     ],
     apply: (ctx, config) =>
       applyNoise(ctx, config.amount as number, config.color as boolean),
+  },
+  {
+    id: "pixelSort",
+    name: "Pixel Sort",
+    fields: [
+      {
+        type: "slider",
+        label: "Threshold",
+        key: "threshold",
+        defaultValue: 128,
+        min: 0,
+        max: 255,
+        step: 1,
+      },
+      {
+        type: "checkbox",
+        label: "Vertical",
+        key: "vertical",
+        defaultValue: false,
+      },
+      {
+        type: "checkbox",
+        label: "Sort dark",
+        key: "sortDark",
+        defaultValue: false,
+      },
+    ],
+    apply: (ctx, config) =>
+      applyPixelSort(
+        ctx,
+        config.threshold as number,
+        config.vertical as boolean,
+        config.sortDark as boolean,
+      ),
   },
 ];
 
