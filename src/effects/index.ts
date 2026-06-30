@@ -1,5 +1,6 @@
 import { applyHueRotate } from "./applyHueRotate";
 import { applyJitter } from "./applyJitter";
+import { applySmear } from "./applySmear";
 import { applyNoise } from "./applyNoise";
 import { applyPixelate } from "./applyPixelate";
 import { applyPixelSort } from "./applyPixelSort";
@@ -279,6 +280,43 @@ export const effectsById: Record<string, EffectDefinition> = {
     ],
     apply: (ctx, config) =>
       applyHueRotate(ctx, config.hue as number, config.saturation as number),
+  },
+  smear: {
+    id: "smear",
+    name: "Smear",
+    fields: [
+      {
+        type: "slider",
+        label: "Amount",
+        key: "amount",
+        defaultValue: 40,
+        min: 0,
+        max: 200,
+        step: 1,
+      },
+      {
+        type: "checkbox",
+        label: "Vertical",
+        key: "vertical",
+        defaultValue: false,
+      },
+      {
+        type: "slider",
+        label: "Trigger brightness",
+        key: "threshold",
+        defaultValue: 100,
+        min: 0,
+        max: 255,
+        step: 1,
+      },
+    ],
+    apply: (ctx, config) =>
+      applySmear(
+        ctx,
+        config.amount as number,
+        config.vertical as boolean,
+        config.threshold as number,
+      ),
   },
 };
 

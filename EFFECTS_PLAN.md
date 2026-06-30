@@ -9,7 +9,7 @@ Ordered by build priority. Each chunk is self-contained and can be built indepen
 | 1   | Noise      | done    |
 | 2   | Pixel Sort | done    |
 | 3   | Hue Rotate | done    |
-| 4   | Smear      | planned |
+| 4   | Smear      | done    |
 | 5   | Datamosh   | planned |
 | 6   | Bloom      | planned |
 | 7   | Mirror     | planned |
@@ -175,7 +175,7 @@ export function applyHueRotate(ctx, hue, saturation): void
 
 ## Chunk 4 — Smear
 
-**Status:** planned
+**Status:** done
 
 **What it does:** Pixels bleed in one direction — bright pixels "drag" their color across the image, simulating VHS tracking errors and tape damage.
 
