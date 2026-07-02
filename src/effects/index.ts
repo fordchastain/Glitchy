@@ -1,6 +1,7 @@
 import { applyHueRotate } from "./applyHueRotate";
 import { applyJitter } from "./applyJitter";
 import { applySmear } from "./applySmear";
+import { applyDatamosh } from "./applyDatamosh";
 import { applyNoise } from "./applyNoise";
 import { applyPixelate } from "./applyPixelate";
 import { applyPixelSort } from "./applyPixelSort";
@@ -316,6 +317,46 @@ export const effectsById: Record<string, EffectDefinition> = {
         config.amount as number,
         config.vertical as boolean,
         config.threshold as number,
+      ),
+  },
+  datamosh: {
+    id: "datamosh",
+    name: "Datamosh",
+    fields: [
+      {
+        type: "slider",
+        label: "Block size",
+        key: "blockSize",
+        defaultValue: 16,
+        min: 4,
+        max: 64,
+        step: 1,
+      },
+      {
+        type: "slider",
+        label: "Max displacement",
+        key: "amount",
+        defaultValue: 40,
+        min: 0,
+        max: 100,
+        step: 1,
+      },
+      {
+        type: "slider",
+        label: "Density %",
+        key: "density",
+        defaultValue: 30,
+        min: 0,
+        max: 100,
+        step: 1,
+      },
+    ],
+    apply: (ctx, config) =>
+      applyDatamosh(
+        ctx,
+        config.blockSize as number,
+        config.amount as number,
+        config.density as number,
       ),
   },
 };

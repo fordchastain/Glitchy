@@ -10,7 +10,7 @@ Ordered by build priority. Each chunk is self-contained and can be built indepen
 | 2   | Pixel Sort | done    |
 | 3   | Hue Rotate | done    |
 | 4   | Smear      | done    |
-| 5   | Datamosh   | planned |
+| 5   | Datamosh   | done    |
 | 6   | Bloom      | planned |
 | 7   | Mirror     | planned |
 | 8   | Dither     | planned |
@@ -228,7 +228,7 @@ export function applySmear(ctx, amount, vertical, threshold): void
 
 ## Chunk 5 — Datamosh
 
-**Status:** planned
+**Status:** done
 
 **What it does:** Divides the image into rectangular blocks and randomly displaces a fraction of them, copying pixel data from a different region. Produces the signature datamosh "block shift" aesthetic.
 
