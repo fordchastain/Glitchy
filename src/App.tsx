@@ -66,6 +66,7 @@ function ConfigControl({
   const [localValue, setLocalValue] = useState<ConfigValue>(value);
   const localValueRef = useRef<ConfigValue>(value);
   const [isDragging, setIsDragging] = useState(false);
+  const isDraggingRef = useRef(false);
 
   useEffect(() => {
     localValueRef.current = localValue;
@@ -79,6 +80,7 @@ function ConfigControl({
     if (!isDragging) return;
     const handlePointerUp = () => {
       setIsDragging(false);
+      isDraggingRef.current = false;
       onChange(localValueRef.current);
     };
     window.addEventListener("pointerup", handlePointerUp);
@@ -115,8 +117,19 @@ function ConfigControl({
           max={field.max}
           step={field.step}
           value={localValue as number}
-          onPointerDown={() => setIsDragging(true)}
-          onChange={(e) => setLocalValue(Number(e.target.value))}
+          onPointerDown={() => {
+            isDraggingRef.current = true;
+            setIsDragging(true);
+          }}
+          onChange={(e) => {
+            const val = Number(e.target.value);
+            setLocalValue(val);
+            // Keyboard adjustments (arrow keys) fire change without a pointer
+            // drag — commit immediately since no pointerup will follow.
+            if (!isDraggingRef.current) {
+              onChange(val);
+            }
+          }}
         />
       </div>
     );

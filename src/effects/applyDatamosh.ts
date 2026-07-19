@@ -1,3 +1,5 @@
+import { createRng } from "./random";
+
 export function applyDatamosh(
   ctx: CanvasRenderingContext2D,
   blockSize: number = 16,
@@ -15,12 +17,14 @@ export function applyDatamosh(
   const rows = Math.ceil(height / blockSize);
   const threshold = density / 100;
 
+  const rng = createRng(0x1f123bb5);
+
   for (let row = 0; row < rows; row++) {
     for (let col = 0; col < cols; col++) {
-      if (Math.random() > threshold) continue;
+      if (rng() > threshold) continue;
 
-      const dx = (Math.random() * 2 - 1) * amount;
-      const dy = (Math.random() * 2 - 1) * amount;
+      const dx = (rng() * 2 - 1) * amount;
+      const dy = (rng() * 2 - 1) * amount;
       const srcCol = Math.max(
         0,
         Math.min(cols - 1, col + Math.round((dx * cols) / 100)),
