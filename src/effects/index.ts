@@ -1,3 +1,4 @@
+import { applyHalftone } from "./applyHalftone";
 import { applyHueRotate } from "./applyHueRotate";
 import { applyJitter } from "./applyJitter";
 import { applySmear } from "./applySmear";
@@ -357,6 +358,43 @@ export const effectsById: Record<string, EffectDefinition> = {
         config.blockSize as number,
         config.amount as number,
         config.density as number,
+      ),
+  },
+  halftone: {
+    id: "halftone",
+    name: "Halftone",
+    fields: [
+      {
+        type: "slider",
+        label: "Dot size",
+        key: "dotSize",
+        defaultValue: 6,
+        min: 2,
+        max: 32,
+        step: 1,
+      },
+      {
+        type: "slider",
+        label: "Screen angle",
+        key: "angle",
+        defaultValue: 45,
+        min: 0,
+        max: 90,
+        step: 1,
+      },
+      {
+        type: "checkbox",
+        label: "Invert (light on dark)",
+        key: "invert",
+        defaultValue: false,
+      },
+    ],
+    apply: (ctx, config) =>
+      applyHalftone(
+        ctx,
+        config.dotSize as number,
+        config.angle as number,
+        config.invert as boolean,
       ),
   },
 };
