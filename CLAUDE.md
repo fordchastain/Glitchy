@@ -69,4 +69,8 @@ Standard Vite + React + TypeScript setup:
 3. Run `npx prettier --write src/effects/applyFoo.ts src/effects/index.ts`
 4. Run `npm run build` to type-check before committing
 
-See `EFFECTS_PLAN.md` for the next 10 planned effects with full implementation specs.
+## Roadmap & effect workflow
+
+Planned effects live as GitHub issues labeled `effect`, not in a checked-in plan file. Browse them with `gh issue list --label effect`; each issue body carries the full implementation spec (config fields, algorithm, `index.ts` entry, edge cases).
+
+To build one: implement it on a `issue-<n>-<slug>` branch following the "Adding New Effects" steps above, then open a PR that closes the issue (`gh pr create`). Effects are the one workflow that branches + PRs instead of committing straight to `master`.

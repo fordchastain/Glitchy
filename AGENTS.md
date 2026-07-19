@@ -48,7 +48,11 @@ npx prettier --write <path-to-file>
 
 ## Roadmap
 
-See `EFFECTS_PLAN.md` for the next 10 effects with full implementation specs.
+Planned effects are tracked as GitHub issues labeled `effect` (repo `fordchastain/Glitchy`), not a checked-in plan file. List them with `gh issue list --label effect`; each issue body holds the full implementation spec.
+
+## Git workflow
+
+Everyday work commits straight to `master`. **Exception:** implementing a tracked effect issue branches (`issue-<n>-<slug>`) and opens a PR that closes the issue, so effects get a review step before landing. This is the only PR-based path — don't generalize it to other changes.
 
 ## Gotchas
 

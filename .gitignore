@@ -24,6 +24,9 @@ dist-ssr
 # Coverage
 coverage
 
+# Claude Code — personal permission layer (shared config is settings.json)
+.claude/settings.local.json
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
